@@ -41,7 +41,12 @@ const userSchema = new mongoose.Schema({
   tokens: [{
     token: String,
 
-  }]
+  }],
+  resetlink:{
+    data:String,
+    default:''
+
+  }
 
 }, {
   timestamps: true
@@ -62,7 +67,7 @@ userSchema.statics.findByCredintials = async (email, password) => {
   }
 
   const isMatch = await bcrypt.compare(password, user.Password);
-
+  
   if (!isMatch) {
     console.log("error not compared");
     throw new Error("unauthorized");
@@ -88,6 +93,7 @@ userSchema.methods.toJSON = function () {
   const objectUser = user.toObject()
   delete objectUser.Password
   delete objectUser.tokens
+  delete objectUser.resetlink
   return objectUser
 
 }

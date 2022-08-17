@@ -8,5 +8,7 @@ router.post("", authControllers.addUser)
 router.post("/login", authControllers.loginUser)
 router.get("/logout", auth, authControllers.logout);
 router.get("/logouts", auth, authControllers.logoutAll)
+router.put("/forgetpassword",authControllers.forgetpassword)
+router.put("/resetpassword",authControllers.resetpassword)
 
 module.exports = router
