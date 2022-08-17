@@ -102,7 +102,7 @@ exports.forgetpassword=async(req,res)=>
       subject: "forget password link",
       html:`
          <h2>Please click on given link to reset your passuordc/h2>
-        <p>${process. env. APP_HOST}/resetpassuord/${token} </p>
+        <p>${process. env. APP_HOST}/resetpassword/${token} </p>
         `
     };
    
