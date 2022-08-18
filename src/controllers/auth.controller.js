@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const express = require("express");
 require("../config/db");
+
 const app = express();
 app.use(express.json());
 const bcrypt = require("bcrypt");
@@ -18,7 +19,7 @@ exports.addUser = async (req, res) => {
 
   }
   catch (e) {
-
+    console.log(e);
     res.status(404).send();
   }
 
@@ -174,4 +175,41 @@ exports.resetpassword=async(req,res)=>{
       })
     })
   }
+}
+
+exports.changepwd=async(req,res)=>{
+  const {Email,Password,newPassword}=req.body;
+  let user = await User.findOne({ Email });
+  if (!user) {
+    console.log("no such user found");
+    throw new Error("no such user");
+  }
+
+  const isMatch = await bcrypt.compare(Password, user.Password);
+  
+  if (!isMatch) {
+    console.log("error not compared");
+    throw new Error("unauthorized");
+  }
+  else{
+    const hashednewPassword =await bcrypt.hash(newPassword, 8);
+    const obj={
+      Password:hashednewPassword
+    }
+    user=_.extend(user,obj)
+    user.save((err,result)=>{
+      if(err)
+      {
+        console.log(err);
+        return res.status(400).json({error:"change password error"})
+      }
+      else
+      {
+        return res.status(200).json({message:"your password is changed sucessfully"})
+      }
+
+    })
+  }
+
+  
 }

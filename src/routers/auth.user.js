@@ -10,5 +10,6 @@ router.get("/logout", auth, authControllers.logout);
 router.get("/logouts", auth, authControllers.logoutAll)
 router.put("/forgetpassword",authControllers.forgetpassword)
 router.put("/resetpassword",authControllers.resetpassword)
+router.put("/changepassword",authControllers.changepwd)
 
 module.exports = router

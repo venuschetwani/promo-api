@@ -138,4 +138,4 @@ userSchema.statics.lastLogin = async (id) => {
 
 const User = new mongoose.model("User", userSchema);
 
-module.exports = User
+module.exports =User
