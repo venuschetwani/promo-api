@@ -9,11 +9,12 @@ app.use(express.urlencoded({
 
 const user_router = require("./routers/user.router");
 const auth_router=require("./routers/auth.user")
+const sku_router=require("./routers/sku.router")
 
 
 app.use('/users',user_router);
 app.use('/users',auth_router)
-
+app.use('/sku',sku_router)
 
 app.get("/", (req, res) => {
     res.json('Hello')

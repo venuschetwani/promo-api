@@ -178,20 +178,24 @@ exports.resetpassword=async(req,res)=>{
 }
 
 exports.changepwd=async(req,res)=>{
-  const {Email,Password,newPassword}=req.body;
+  const {Email,oldPassword,newPassword,confirmnewPassword}=req.body;
   let user = await User.findOne({ Email });
   if (!user) {
     console.log("no such user found");
     throw new Error("no such user");
   }
 
-  const isMatch = await bcrypt.compare(Password, user.Password);
+  const isMatch = await bcrypt.compare(oldPassword, user.Password);
   
   if (!isMatch) {
     console.log("error not compared");
     throw new Error("unauthorized");
   }
-  else{
+  else
+  {
+    
+    if(newPassword===confirmnewPassword)
+    {
     const hashednewPassword =await bcrypt.hash(newPassword, 8);
     const obj={
       Password:hashednewPassword
@@ -210,6 +214,5 @@ exports.changepwd=async(req,res)=>{
 
     })
   }
-
-  
+  }
 }
