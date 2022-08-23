@@ -13,9 +13,15 @@ const auth = async (req, res, next) => {
         if (!user) {
             throw new Error()
         }
+        
 
         req.user = user
         req.token = token
+        if(user.role!=='admin')
+        {
+            return res.status(403).send({error: { status:403, message:'Access denied.'}})
+           
+        }
        
         next()
     }

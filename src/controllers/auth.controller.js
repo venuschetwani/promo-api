@@ -10,8 +10,13 @@ const _ = require("lodash")
 
 
 exports.addUser = async (req,res) => {
-  const user = new User(req.body);
+  
   try {
+    if(req.body.password)
+    {
+      return res.status(400).send({error:"password nor required"})
+    }
+    let user = new User(req.body)
    
     await user.save()
    res.status(201).send(user)
@@ -52,6 +57,7 @@ exports.loginUser = async (req, res) => {
       }
     }
     else {
+      console.log("no password");
       const userPassword = await bcrypt.hash(req.body.password, 8);
       const user = await User.findOneAndUpdate({ email }, { password: userPassword })
       await user.save()
@@ -193,7 +199,7 @@ exports.changepwd = async (req, res) => {
         password: hashednewPassword
       }
       req.user = _.extend(req.user, obj)
-      req.user.save((err, result) => {
+      req.user.save((err) => {
         if (err) {
           console.log(err);
           return res.status(400).json({ error: "change password error" })
@@ -203,21 +209,31 @@ exports.changepwd = async (req, res) => {
         }
 
       })
-    }
+    } 
   }
 }
 
 
 exports.register=async(req,res)=>{
   try{
+    let user = new User(req.body)
+    
   if(!req.body.password)
   {
-    return res.status(400).send({error:"password is required"})
+    
+   const obj={
+     password:""
+   }
+  
+   user=_.extend(user,obj)
+   await user.save()
+   res.status(201).send(user)
+
   }
-  const user = new User(req.body)
-  user.save()
-  res.send("user logout all the tokens");
+  await user.save()
+  res.status(201).send(user)
 } catch (e) {
+  console.log(e);
   res.status(404).send(e);
 }
 
