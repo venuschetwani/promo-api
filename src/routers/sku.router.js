@@ -3,14 +3,14 @@ require("../config/db");
 const express = require("express");
 const router = new express.Router();
 const skuControllers=require("../controllers/sku.controllers")
+const auth=require("../middleware/auth")
 
 
 
-
-router.post("",skuControllers.addskuUser)
-router.get("/getall",skuControllers.getskuUser)
-router.get("/:id",skuControllers.skuuserById)
-router.patch("/:id", skuControllers.skupatchById);
-router.delete("/:id", skuControllers.skudeleteById);
+router.post("",auth,skuControllers.addskuUser)
+router.get("/getallsku",auth,skuControllers.getskuUser)
+router.get("/:id",auth,skuControllers.skuuserById)
+router.patch("/:id",auth,skuControllers.skupatchById);
+router.delete("/:id",auth, skuControllers.skudeleteById);
 
 module.exports=router

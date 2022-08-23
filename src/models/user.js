@@ -7,15 +7,15 @@ const datenow = new Date()
 
 const userSchema = new mongoose.Schema({
 
-  FirstName: {
+  firstName: {
     type: String,
     trim: true
   },
-  LastName: {
+  lastName: {
     type: String,
     trim: true
   },
-  Email: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -27,11 +27,11 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
-  Password: {
+  password: {
     type: String,
     default: ''
   },
-  Role: {
+  role: {
     type: String
   },
   lastLogin: {
@@ -56,20 +56,34 @@ const userSchema = new mongoose.Schema({
 
 
 
+//relation 
+userSchema.virtual('user_skuuser', {
+  ref: 'skuUser',
+  localField: '_id',
+  foreignField: 'owner'
+})
+
+
+
+
+
+
+
+
 //login confirmation
 userSchema.statics.findByCredintials = async (email, password) => {
 
-  const user = await User.findOne({ Email: email });
+  const user = await User.findOne({ email });
 
   if (!user) {
     console.log("no such user found");
     throw new Error("no such user");
   }
 
-  const isMatch = await bcrypt.compare(password, user.Password);
+  const isMatch = await bcrypt.compare(password, user.password);
   
   if (!isMatch) {
-    console.log("error not compared");
+    console.log("error password not compared");
     throw new Error("unauthorized");
   }
 
@@ -91,7 +105,7 @@ userSchema.methods.tokenauthkey = async function () {
 userSchema.methods.toJSON = function () {
   const user = this
   const objectUser = user.toObject()
-  delete objectUser.Password
+  delete objectUser.password
   delete objectUser.tokens
   delete objectUser.resetlink
   return objectUser

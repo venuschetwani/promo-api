@@ -31,7 +31,7 @@ exports.userById = (req, res) => {
 
 exports.patchAll = async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowupdates = ["FirstName", "LastName", "Role", "Email", "Password"];
+    const allowupdates = ["firstName", "lastName", "role", "email", "password"];
     const valid = updates.every((update) => allowupdates.includes(update));
     if (!valid) {
         return res.status(404).send({ error: "invalid" });
@@ -49,7 +49,7 @@ exports.patchAll = async (req, res) => {
 
 exports.patchById = async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowupdates = ["FirstName", "LastName", "Role", "Email", "Password"];
+    const allowupdates = ["firstName", "lastName", "role", "email", "password"];
     const valid = updates.every((update) => allowupdates.includes(update));
     if (!valid) {
         return res.status(404).send({ error: "invalid" });

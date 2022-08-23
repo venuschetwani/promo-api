@@ -1,13 +1,14 @@
 const skuUser=require('../models/sku.models')
 const express = require("express");
 require("../config/db");
-
 const app = express();
 app.use(express.json());
 
 exports.addskuUser=async(req,res)=>{
     try {
-        const sku_user = new skuUser(req.body);
+        const sku_user = new skuUser({
+            ...req.body,
+        owner:req.user._id});
         await sku_user.save()
         res.status(201).send(sku_user)
     
@@ -19,16 +20,24 @@ exports.addskuUser=async(req,res)=>{
 }
 
 
-exports.getskuUser = (req, res) => {
-    skuUser.find({}).then((skuusers) => {
-        res.send(skuusers);
-    })
+exports.getskuUser = async(req, res) => {
+    try{
+    await req.user.populate("user_skuuser")
+    
+        res.send(req.user.user_skuuser);
+    }
+    catch(e)
+    {
+        console.log(e);
+        res.status(404).send(e);
+    }
+
 }
 
 
 exports.skuuserById = (req, res) => {
     const _id = req.params.id;
-    skuUser.find({ _id })
+    skuUser.findOne({ _id ,owner: req.user._id})
         .then((skuuser) => {
             if (!skuuser) {
                 return res.status(404).send();
@@ -43,14 +52,14 @@ exports.skuuserById = (req, res) => {
 
 exports.skupatchById=async(req,res)=>{
     const updates = Object.keys(req.body);
-    const allowupdates = ["name","product","DayId","Brand","status"];
+    const allowupdates = ["name","product","dayId","brand","status"];
     const valid = updates.every((update) => allowupdates.includes(update));
     if (!valid) {
         return res.status(404).send({ error: "invalid" });
     }
     try {
 
-        const skuuser = await skuUser.findById(req.params.id);
+        const skuuser = await skuUser.findOne({_id:req.params.id,owner: req.user._id});
         updates.forEach((update) => (skuuser[update] = req.body[update]));
         await skuuser.save();
         if (!skuuser) {
@@ -65,7 +74,7 @@ exports.skupatchById=async(req,res)=>{
 
 exports.skudeleteById = async (req, res) => {
     try {
-        const skuuser = await skuUser.findByIdAndDelete(req.params.id);
+        const skuuser = await skuUser.findOneAndDelete({_id:req.params.id,owner: req.user._id});
         if (!skuuser) {
             return res.status(404).send("no such user found");
         }

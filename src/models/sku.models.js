@@ -12,17 +12,23 @@ const skuSchema = new mongoose.Schema({
       type: String,
       trim: true
     },
-    DayId: {
+    dayId: {
       type:Number
     },
-    Brand: {
+    brand: {
       type: String,
      
     },
     status:{
      type:String,
     
-    }
+    },
+    owner:{
+      type:mongoose.Schema.Types.ObjectId,
+      required:true,
+      ref:'User'
+  }
+
 });
 
 const skuUser = new mongoose.model("skuUser", skuSchema);

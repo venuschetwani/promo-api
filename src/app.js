@@ -13,7 +13,7 @@ const sku_router=require("./routers/sku.router")
 
 
 app.use('/users',user_router);
-app.use('/users',auth_router)
+app.use('/user',auth_router)
 app.use('/sku',sku_router)
 
 app.get("/", (req, res) => {
