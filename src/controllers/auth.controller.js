@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken")
 const _ = require("lodash")
+const forgetpswdemail=require('../utils/email')
 
 
 exports.addUser = async (req,res) => {
@@ -106,39 +107,16 @@ exports.forgetpassword = async (req, res) => {
   }
 
   const token = jwt.sign({ _id: userrr._id }, process.env.RESET_KEY, { expiresIn: '24h' })
-  const mailoptions =
-  {
-    from: "shubhangih.mobio@gmail.com",
-    to: email,
-    subject: "forget password link",
-    html: `
-         <h2>Please click on given link to reset your passwords/h2>
-        <p>${process.env.APP_HOST}/resetpassword/${token} </p>
-        `
-  };
-
-
-  let transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    service: "gmail",
-    secure: false,
-    auth: {
-      user: "shubhangihingu@gmail.com",
-      pass: "iossrpmwotsdsdcg",
-    },
-  });
-  let info = await transporter.sendMail(mailoptions);
+  forgetpswdemail(email,token);
   userrr.updateOne({ resetlink: token }, function (err, success) {
     if (err) {
-      if (info.rejected == null) {
-        console.log("email not send");
+      
         return res.status(400).json({ error: "reset password link error" })
-      }
+      
     }
     else {
-      console.log(info);
-      return res.json({ message: "email has been successfully send,Kindly reset your password" })
+     
+      return res.json({ success,message: "email has been successfully send,Kindly reset your password" })
     }
   })
 

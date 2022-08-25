@@ -15,3 +15,4 @@ router.put("/resetpassword",authControllers.resetpassword)
 router.put("/changepassword",auth,authControllers.changepwd)
 
 module.exports = router
+

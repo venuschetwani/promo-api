@@ -56,9 +56,17 @@ const userSchema = new mongoose.Schema({
 
 
 
-//relation 
+//relation to sku
 userSchema.virtual('user_skuuser', {
   ref: 'skuUser',
+  localField: '_id',
+  foreignField: 'owner'
+})
+
+
+//relation to shelf
+userSchema.virtual('user_shelfuser', {
+  ref: 'shelfUser',
   localField: '_id',
   foreignField: 'owner'
 })

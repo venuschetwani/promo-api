@@ -2,7 +2,7 @@ require("dotenv").config();
 require("../config/db");
 const express = require("express");
 const router = new express.Router();
-const skuControllers=require("../controllers/sku.controllers")
+const skuControllers=require("../controllers/sku.controller")
 const auth=require("../middleware/auth")
 
 
