@@ -6,7 +6,7 @@ const router = new express.Router();
 const userControllers = require('../controllers/user.controller')
 
 
-
+//CRUD operations on user
 router.get("", userControllers.getUser)
 router.get("/me", auth, userControllers.getUserauth)
 router.get("/:id", userControllers.userById);

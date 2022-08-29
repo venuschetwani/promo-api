@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-   
+
   },
   role: {
     type: String
@@ -42,9 +42,9 @@ const userSchema = new mongoose.Schema({
     token: String,
 
   }],
-  resetlink:{
-    data:String,
-    default:''
+  resetlink: {
+    data: String,
+    default: ''
 
   }
 
@@ -72,12 +72,6 @@ userSchema.virtual('user_shelfuser', {
 })
 
 
-
-
-
-
-
-
 //login confirmation
 userSchema.statics.findByCredintials = async (email, password) => {
 
@@ -89,7 +83,7 @@ userSchema.statics.findByCredintials = async (email, password) => {
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
-  
+
   if (!isMatch) {
     console.log("error password not compared");
     throw new Error("unauthorized");
@@ -152,7 +146,7 @@ userSchema.statics.lastLogin = async (id) => {
 
     return user
   } catch (error) {
-   // console.error(error);
+    // console.error(error);
   }
 }
 
@@ -160,4 +154,4 @@ userSchema.statics.lastLogin = async (id) => {
 
 const User = new mongoose.model("User", userSchema);
 
-module.exports =User
+module.exports = User

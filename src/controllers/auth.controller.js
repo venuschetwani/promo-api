@@ -4,23 +4,24 @@ require("../config/db");
 const app = express();
 app.use(express.json());
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken")
 const _ = require("lodash")
-const forgetpswdemail=require('../utils/email')
+const forgetpswdemail = require('../utils/email')
 
 
-exports.addUser = async (req,res) => {
-  
+
+
+//AddingUser   --->POST request
+exports.addUser = async (req, res) => {
+
   try {
-    if(req.body.password)
-    {
-      return res.status(400).send({error:"password nor required"})
+    if (req.body.password) {
+      return res.status(400).send({ error: "password not required" })
     }
     let user = new User(req.body)
-   
+
     await user.save()
-   res.status(201).send(user)
+    res.status(201).send(user)
   }
   catch (e) {
     console.log(e);
@@ -32,13 +33,15 @@ exports.addUser = async (req,res) => {
 
 
 
-
+//LoginUser   --->POST request
 exports.loginUser = async (req, res) => {
   try {
 
     email = req.body.email
     const userr = await User.findOne({ email })
-
+    if (!userr) {
+      return res.status(401).send({ error: "invalid email" })
+    }
     if (userr.password.length > 0) {
       const user = await User.findByCredintials(
         req.body.email,
@@ -74,7 +77,7 @@ exports.loginUser = async (req, res) => {
 }
 
 
-
+//LogoutToken by auth    --->GET request
 exports.logouttoken = async (req, res) => {
   try {
     console.log("hello");
@@ -88,6 +91,9 @@ exports.logouttoken = async (req, res) => {
   }
 }
 
+
+
+//LogoutAllToken by auth    --->GET request
 exports.logoutAll = async (req, res) => {
   try {
     req.user.tokens = [];
@@ -98,6 +104,9 @@ exports.logoutAll = async (req, res) => {
   }
 }
 
+
+
+//ForgetPassword     --->PUT request
 exports.forgetpassword = async (req, res) => {
   const email = req.body.email;
   const userrr = await User.findOne({ email })
@@ -107,16 +116,16 @@ exports.forgetpassword = async (req, res) => {
   }
 
   const token = jwt.sign({ _id: userrr._id }, process.env.RESET_KEY, { expiresIn: '24h' })
-  forgetpswdemail(email,token);
+  forgetpswdemail(email, token);   //Sending forgetpasswordtoken link through email
   userrr.updateOne({ resetlink: token }, function (err, success) {
     if (err) {
-      
-        return res.status(400).json({ error: "reset password link error" })
-      
+
+      return res.status(400).json({ error: "reset password link error" })
+
     }
     else {
-     
-      return res.json({ success,message: "email has been successfully send,Kindly reset your password" })
+
+      return res.json({ success, message: "email has been successfully send,Kindly reset your password" })
     }
   })
 
@@ -124,6 +133,8 @@ exports.forgetpassword = async (req, res) => {
 }
 
 
+
+//ResetPassword   --->PUT request
 exports.resetpassword = async (req, res) => {
   const { resetlink, newPassword } = req.body;
   const hashednewPassword = await bcrypt.hash(newPassword, 8);
@@ -144,7 +155,7 @@ exports.resetpassword = async (req, res) => {
           resetlink: ""
         }
 
-        user = _.extend(user, obj)
+        user = _.extend(user, obj)   //replacing the password
         user.save((err, result) => {
           if (err) {
             console.log(err);
@@ -160,23 +171,27 @@ exports.resetpassword = async (req, res) => {
   }
 }
 
+
+
+
+//ChangePassword by auth    --->PUT request
 exports.changepwd = async (req, res) => {
   const { oldPassword, newPassword, confirmnewPassword } = req.body;
 
-  const Match = await bcrypt.compare(oldPassword, req.user.password);
+  const Match = await bcrypt.compare(oldPassword, req.user.password);  //comparing pswd
 
   if (!Match) {
     console.log("no such user found");
     throw new Error("no such user");
-  } 
+  }
   else {
 
     if (newPassword === confirmnewPassword) {
-      const hashednewPassword = await bcrypt.hash(newPassword, 8);
+      const hashednewPassword = await bcrypt.hash(newPassword, 8);   //encrypting pswd
       const obj = {
         password: hashednewPassword
       }
-      req.user = _.extend(req.user, obj)
+      req.user = _.extend(req.user, obj)   //replacing pswd
       req.user.save((err) => {
         if (err) {
           console.log(err);
@@ -187,33 +202,34 @@ exports.changepwd = async (req, res) => {
         }
 
       })
-    } 
+    }
   }
 }
 
 
-exports.register=async(req,res)=>{
-  try{
+
+//Registering Admin    --->POST request
+exports.register = async (req, res) => {
+  try {
     let user = new User(req.body)
-    
-  if(!req.body.password)
-  {
-    
-   const obj={
-     password:""
-   }
-  
-   user=_.extend(user,obj)
-   await user.save()
-   res.status(201).send(user)
 
+    if (!req.body.password) {
+
+      const obj = {
+        password: ""
+      }
+
+      user = _.extend(user, obj)
+      await user.save()
+      res.status(201).send(user)
+
+    }
+    await user.save()
+    res.status(201).send(user)
+  } catch (e) {
+    console.log(e);
+    res.status(404).send(e);
   }
-  await user.save()
-  res.status(201).send(user)
-} catch (e) {
-  console.log(e);
-  res.status(404).send(e);
-}
 
 
 }

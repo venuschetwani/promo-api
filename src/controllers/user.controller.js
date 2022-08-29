@@ -3,16 +3,24 @@ const User = require("../models/user");
 const router = new express.Router();
 router.use(express.json());
 
+
+
+//Getting user  --->GET req
 exports.getUser = (req, res) => {
     User.find({}).then((users) => {
         res.send(users);
     })
 }
 
+
+//Getting user by auth  --->GET req
 exports.getUserauth = (req, res) => {
     res.send(req.user)
 }
 
+
+
+//Getting user by Id     --->GET req
 exports.userById = (req, res) => {
     const _id = req.params.id;
     User.find({ _id })
@@ -28,6 +36,8 @@ exports.userById = (req, res) => {
         });
 }
 
+
+//Updating User by auth   --->PATCH req
 exports.patchAll = async (req, res) => {
     const updates = Object.keys(req.body);
     const allowupdates = ["firstName", "lastName", "role", "email", "password"];
@@ -46,6 +56,8 @@ exports.patchAll = async (req, res) => {
     }
 }
 
+
+//Updating User by Id   --->PATCH req
 exports.patchById = async (req, res) => {
     const updates = Object.keys(req.body);
     const allowupdates = ["firstName", "lastName", "role", "email", "password"];
@@ -68,6 +80,8 @@ exports.patchById = async (req, res) => {
     }
 }
 
+
+//Deleting user by ID  --->DELETE req
 exports.deleteById = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
@@ -82,6 +96,8 @@ exports.deleteById = async (req, res) => {
     }
 }
 
+
+//Deleting user by auth  --->DELETE req
 exports.deleteByAuth = async (req, res) => {
     try {
         await req.user.remove();

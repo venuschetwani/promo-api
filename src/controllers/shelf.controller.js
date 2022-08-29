@@ -8,7 +8,11 @@ const xlsx = require("xlsx")
 const exceljs = require("exceljs")
 const path = require('path')
 const fs = require('fs')
+app.use('/uploads', express.static('uploads'));
 
+
+
+//adding shelfUser    --->GET req
 exports.addshelfUser = async (req, res) => {
   try {
     const shelf_user = new shelfUser({
@@ -26,6 +30,8 @@ exports.addshelfUser = async (req, res) => {
 }
 
 
+
+//GettingAllthe ShelfUser    --->GET req
 exports.getshelfUser = async (req, res) => {
   try {
     await req.user.populate("user_shelfuser")
@@ -40,6 +46,8 @@ exports.getshelfUser = async (req, res) => {
 }
 
 
+
+//GetinfShelfUserby ID   --->GET req
 exports.shelfuserById = (req, res) => {
   const _id = req.params.id;
   shelfUser.findOne({ _id, owner: req.user._id })
@@ -55,6 +63,9 @@ exports.shelfuserById = (req, res) => {
     });
 }
 
+
+
+//Updating shelfUserbyID    --->PATCH req
 exports.shelfpatchById = async (req, res) => {
   const updates = Object.keys(req.body);
   const allowupdates = ["name", "description", "shelfPath", "status"];
@@ -65,7 +76,7 @@ exports.shelfpatchById = async (req, res) => {
   try {
 
     const shelfuser = await shelfUser.findOne({ _id: req.params.id, owner: req.user._id });
-    updates.forEach((update) => (shelfuser[update] = req.body[update]));
+    updates.forEach((update) => (shelfuser[update] = req.body[update]));  //updating
     await shelfuser.save();
     if (!shelfuser) {
       return res.status(404).send();
@@ -77,6 +88,9 @@ exports.shelfpatchById = async (req, res) => {
   }
 }
 
+
+
+//Deleting ShelfUserbyId    --->DELETE req
 exports.shelfdeleteById = async (req, res) => {
   try {
     const shelfuser = await shelfUser.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
@@ -92,12 +106,7 @@ exports.shelfdeleteById = async (req, res) => {
 }
 
 
-
-
-
-
-
-
+//Uploading Excelfile    ---->POST req
 exports.uploadXLSX = async (req, res) => {
   try {
     var workbook = xlsx.readFile(req.file.path);
@@ -125,9 +134,13 @@ exports.uploadXLSX = async (req, res) => {
   }
 };
 
+
+//Storing the uploaded file in Uploads folder
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads");
+    fs.mkdir('./uploads/', (err) => {
+      cb(null, './uploads/');
+    })
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
@@ -139,9 +152,7 @@ exports.upload = multer({ storage: storage });
 
 
 
-
-
-
+//Creating an excelfile from the shelfUser database    --->GET req
 exports.excelfile = async (req, res) => {
   try {
     const users = await shelfUser.find({})
@@ -160,27 +171,20 @@ exports.excelfile = async (req, res) => {
     let count = 1;
     users.forEach(user => {
       user.s_no = count;
-      if(user.owner)
-      {
-        console.log(worksheet.columns[4]);
-        user.owner.value=user.owner.toString()
-      }
       count++;
       worksheet.addRow(user);
-      
-      
-      
-     })
+    })
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     })
-    
 
-    workbook.xlsx.writeFile('users.xlsx').then(function () {
+
+    workbook.xlsx.writeFile('users.xlsx').then(function (err, data) {
       console.log('file is written');
+    
     });
 
-     res.status(200).send({message:"excel file created"})
+    res.status(200).send({ message: "excel file created" })
   }
   catch (e) {
     console.log(e);
