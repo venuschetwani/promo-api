@@ -110,12 +110,10 @@ exports.shelfdeleteById = async (req, res) => {
 exports.uploadXLSX = async (req, res) => {
   try {
     var workbook = xlsx.readFile(req.file.path);
-    console.log(workbook);
     var sheet_name_list = workbook.SheetNames;
     let jsonData = xlsx.utils.sheet_to_json(
       workbook.Sheets[sheet_name_list[0]]
     );
-    console.log(jsonData);
     if (jsonData.length === 0) {
       return res.status(400).json({
         success: false,
@@ -155,12 +153,12 @@ exports.upload = multer({ storage: storage });
 //Creating an excelfile from the shelfUser database    --->GET req
 exports.excelfile = async (req, res) => {
   try {
-    const users = await shelfUser.find({})
+    const users = await shelfUser.find({}).populate("owner")
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet('shelfUser')
     worksheet.columns = [
       { header: 'S.no', key: 's_no', width: 10 },
-      { header: 'name', key: 'name', width: 10 },
+      { header: 'name', key: 'name', width: 15 },
       { header: 'description', key: 'description', width: 20 },
       { header: 'shelfPath', key: 'shelfPath', width: 20 },
       { header: 'status', key: 'status', width: 10 },
@@ -170,9 +168,16 @@ exports.excelfile = async (req, res) => {
 
     let count = 1;
     users.forEach(user => {
-      user.s_no = count;
+      worksheet.addRow({
+        s_no: count,
+        name: user.name,
+        description: user.description,
+        shelfPath: user.shelfPath,
+        status: user.status,
+        owner: `${user.owner._id}`
+      });
       count++;
-      worksheet.addRow(user);
+
     })
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
@@ -180,8 +185,8 @@ exports.excelfile = async (req, res) => {
 
 
     workbook.xlsx.writeFile('users.xlsx').then(function (err, data) {
-      console.log('file is written');
-    
+      console.log('Excel file is written');
+
     });
 
     res.status(200).send({ message: "excel file created" })
