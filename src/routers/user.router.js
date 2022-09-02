@@ -7,7 +7,7 @@ const userControllers = require('../controllers/user.controller')
 
 
 //CRUD operations on user
-router.get("", userControllers.getUser)
+router.get("", userControllers.getAllUser)
 router.get("/me", auth, userControllers.getUserauth)
 router.get("/:id", userControllers.userById);
 router.patch("/me", auth, userControllers.patchAll);

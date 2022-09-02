@@ -18,8 +18,11 @@ exports.addUser = async (req, res) => {
     if (req.body.password) {
       return res.status(400).send({ error: "password not required" })
     }
+    obj={
+      owner: req.user._id
+    }
     let user = new User(req.body)
-
+    user=_.extend(user,obj)
     await user.save()
     res.status(201).send(user)
   }

@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema({
     token: String,
 
   }],
+  owner:{
+    type: mongoose.Schema.Types.ObjectId,
+  },
   resetlink: {
     data: String,
     default: ''

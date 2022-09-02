@@ -35,7 +35,7 @@ exports.addshelfUser = async (req, res) => {
 exports.getshelfUser = async (req, res) => {
   try {
     await req.user.populate("user_shelfuser")
-
+    
     res.send(req.user.user_shelfuser);
   }
   catch (e) {
@@ -197,3 +197,22 @@ exports.excelfile = async (req, res) => {
   }
 }
 
+
+//it will create an _id to the data
+// exports.excelfile = async (req, res) => {
+
+//   var wb = xlsx.utils.book_new(); //new workbook
+//   shelfUser.find((err,Shelf)=>{
+//       if(err){
+//           console.log(err)
+//       }else{
+//           var temp = JSON.stringify(Shelf);
+//           temp = JSON.parse(temp);
+//           var ws = xlsx.utils.json_to_sheet(temp);
+//           var down ='./users.xlsx'
+//           xlsx.utils.book_append_sheet(wb,ws,"sheet1");
+//           xlsx.writeFile(wb,down);
+//          res.download(down);
+//       }
+//   });
+//   };
