@@ -1,10 +1,20 @@
 const express = require('express');
+const morgan = require('morgan')
+const helmet = require('helmet')
+const cors = require('cors')
 const user_router = require("./routers/user.router");
 const auth_router = require("./routers/auth.user")
 const sku_router = require("./routers/sku.router")
 const shelf_router = require("./routers/shelf.router")
 const bodyparser = require('body-parser')
 const app = express();
+
+//third party middleware
+app.use(morgan('dev'))
+app.use(helmet())
+app.use(cors())
+
+
 
 // Body-parser middleware
 app.use(bodyparser.urlencoded({ extended: false }))

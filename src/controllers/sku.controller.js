@@ -24,10 +24,47 @@ exports.addskuUser = async (req, res) => {
 
 
 //Getting SkuUserby Auth   --->GET req
+
+
+//GET  /getallshelf?status=active
+//GET /getallshelf?limit=10&skip=10
+//GET  /user/me?search="name,product,brand,status"
 exports.getskuUser = async (req, res) => {
     try {
-        await req.user.populate("user_skuuser")
+        const match = {}
 
+
+        if (req.query.search) {
+            let data = await skuUser.find({
+                owner: req.user._id,
+                "$or": [
+                    { name: { $regex: req.query.search } },
+                    { product: { $regex: req.query.search } },
+                    { brand: { $regex: req.query.search } },
+                    { status: { $regex: req.query.search } }
+                ]
+            })
+
+            return res.status(200).json(data)
+        }
+
+        if (req.query.status) {
+            console.log(req.query.status);
+            if (req.query.status === "active") {
+                match.status = "active"
+            }
+            console.log(match);
+        }
+
+        await req.user.populate({
+            path: "user_skuuser",
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            },
+        })
+        console.log(req.user.user_skuuser);
         res.send(req.user.user_skuuser);
     }
     catch (e) {
@@ -39,6 +76,7 @@ exports.getskuUser = async (req, res) => {
 
 //Getting SkuUserbyId    --->GET req
 exports.skuuserById = (req, res) => {
+
     const _id = req.params.id;
     skuUser.findOne({ _id, owner: req.user._id })
         .then((skuuser) => {

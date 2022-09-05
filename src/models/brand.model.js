@@ -1,18 +1,14 @@
 const mongoose = require('mongoose');
 
-const shelfSchema = new mongoose.Schema({
+const brandSchema = new mongoose.Schema({
 
-  name: {
+  brandName: {
     type: String,
     trim: true
   },
-  description: {
+  no_Sku: {
     type: String,
     trim: true
-  },
-  shelfPath: {
-    type: String,
-
   },
   status: {
     type: String,
@@ -26,6 +22,6 @@ const shelfSchema = new mongoose.Schema({
 
 });
 
-const shelfUser = new mongoose.model("shelfUser", shelfSchema);
+const brandUser = new mongoose.model("brandUser", brandSchema);
 
-module.exports = shelfUser
+module.exports = brandUser

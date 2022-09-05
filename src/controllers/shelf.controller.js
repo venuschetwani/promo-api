@@ -32,10 +32,43 @@ exports.addshelfUser = async (req, res) => {
 
 
 //GettingAllthe ShelfUser    --->GET req
+
+//GET  /getallshelf?status=active
+//GET /getallshelf?limit=10&skip=10
+//GET  /user/me?search="name,description,shelfPath,status"
 exports.getshelfUser = async (req, res) => {
   try {
-    await req.user.populate("user_shelfuser")
-    
+    const match = {}
+
+    if (req.query.search) {
+      let data = await shelfUser.find({
+        owner: req.user._id,
+        "$or": [
+          { name: { $regex: req.query.search } },
+          { description: { $regex: req.query.search } },
+          { shelfPath: { $regex: req.query.search } },
+          { status: { $regex: req.query.search } }
+        ]
+      })
+
+      return res.status(200).json(data)
+    }
+
+
+    if (req.query.status) {
+      if (req.query.status === "active") {
+        match.status = "active"
+      }
+    }
+
+    await req.user.populate({
+      path: "user_shelfuser",
+      match,
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip)
+      },
+    })
     res.send(req.user.user_shelfuser);
   }
   catch (e) {
