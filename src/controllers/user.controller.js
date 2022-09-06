@@ -20,47 +20,44 @@ exports.getAllUser = (req, res) => {
 //GET  /user/me?page=2&limit=5
 //filter or search
 //GET  /user/me?search="firstname,lastname,email,role"
-exports.getUserauth = async(req, res) => {
-   
-    try{
-        
-    if(req.query.search)
-    {
-   let data= await User.find({
-        owner:req.user._id,
-            "$or":[
-                {firstName:{$regex:req.query.search}},
-                {lastName:{$regex:req.query.search}},
-                {email:{$regex:req.query.search}},
-                {role:{$regex:req.query.search}}
-            ]
-           })   
-         return  res.status(200).json(data) 
-    } 
-  
-   
-    const pageOptions = {
-        page: parseInt(req.query.page, 10) || 0,
-        limit: parseInt(req.query.limit, 10) || 10
-    }
+exports.getUserauth = async (req, res) => {
 
-  
-   await User.find({owner:req.user._id})
-        .skip((pageOptions.page-1) * pageOptions.limit)
-        .limit(pageOptions.limit)
-        .exec(function (err, doc) {
-            if(err) { res.status(500).json(err); return; };
-            res.status(200).json(doc);
-        });
-   
-    
-        
-    }catch(e)
-    {
+    try {
+        if (req.query.search) {
+            let data = await User.find({
+                owner: req.user._id,
+                "$or": [
+                    { firstName: { $regex: req.query.search } },
+                    { lastName: { $regex: req.query.search } },
+                    { email: { $regex: req.query.search } },
+                    { role: { $regex: req.query.search } }
+                ]
+            })
+            return res.status(200).json(data)
+        }
+
+
+        const pageOptions = {
+            page: parseInt(req.query.page, 10) || 0,
+            limit: parseInt(req.query.limit, 10) || 10
+        }
+
+
+        await User.find({ owner: req.user._id })
+            .skip((pageOptions.page - 1) * pageOptions.limit)
+            .limit(pageOptions.limit)
+            .exec(function (err, doc) {
+                if (err) { res.status(500).json(err); return; };
+                res.status(200).json(doc);
+            });
+
+
+
+    } catch (e) {
         console.log(e);
     }
-    
-    
+
+
 }
 
 

@@ -14,8 +14,6 @@ app.use(morgan('dev'))
 app.use(helmet())
 app.use(cors())
 
-
-
 // Body-parser middleware
 app.use(bodyparser.urlencoded({ extended: false }))
 app.use(bodyparser.json())

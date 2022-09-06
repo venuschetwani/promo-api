@@ -32,21 +32,35 @@ exports.addskuUser = async (req, res) => {
 exports.getskuUser = async (req, res) => {
     try {
         const match = {}
+        if (req.query.search){
+        if(/^[0-9]+$/.test(req.query.search))
+        {
+            let dataa = await skuUser.find({
+                owner: req.user._id,
+                "$or": [
+                    { dayId: parseInt( req.query.search ) },
+                   
+                ]
+            })
 
-
-        if (req.query.search) {
+            return res.status(200).json(dataa)
+        }
+        
+        else {
+            
             let data = await skuUser.find({
                 owner: req.user._id,
                 "$or": [
                     { name: { $regex: req.query.search } },
                     { product: { $regex: req.query.search } },
                     { brand: { $regex: req.query.search } },
-                    { status: { $regex: req.query.search } }
+                    { status: { $regex: req.query.search } },
+                   
                 ]
             })
 
             return res.status(200).json(data)
-        }
+        }}
 
         if (req.query.status) {
             console.log(req.query.status);
