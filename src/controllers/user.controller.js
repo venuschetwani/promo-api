@@ -64,8 +64,8 @@ exports.getUserauth = async (req, res) => {
 
 //Getting user by Id     --->GET req
 exports.userById = (req, res) => {
-    const _id = req.params.id;
-    User.find({ _id })
+
+    User.findOne({ _id: req.params.id, owner: req.user._id  })
         .then((user) => {
             if (!user) {
                 return res.status(404).send();
@@ -79,37 +79,41 @@ exports.userById = (req, res) => {
 }
 
 
-//Updating User by auth   --->PATCH req
-exports.patchAll = async (req, res) => {
-    const updates = Object.keys(req.body);
-    const allowupdates = ["firstName", "lastName", "role", "email", "password"];
-    const valid = updates.every((update) => allowupdates.includes(update));
-    if (!valid) {
-        return res.status(404).send({ error: "invalid" });
-    }
+// //Updating User by auth   --->PATCH req
+// exports.patchAll = async (req, res) => {
+//     const updates = Object.keys(req.body);
+//     const allowupdates = ["firstName", "lastName", "role", "email"];
+//     const valid = updates.every((update) => allowupdates.includes(update));
+//     if (!valid) {
+//         return res.status(404).send({ error: "invalid" });
+//     }
 
-    try {
-        updates.forEach((update) => (req.user[update] = req.body[update]));
-        await req.user.save()
-        res.send(req.user)
-    }
-    catch (e) {
-        res.status(400).send(e);
-    }
-}
+//     try {
+//         const user = await User.findOne({ _id: req.params.id, owner: req.user._id });
+//         updates.forEach((update) => (req.user[update] = req.body[update]));
+//         await req.user.save()
+//         res.send(req.user)
+//     }
+//     catch (e) {
+//         res.status(400).send(e);
+//     }
+// }
 
 
 //Updating User by Id   --->PATCH req
 exports.patchById = async (req, res) => {
+
     const updates = Object.keys(req.body);
-    const allowupdates = ["firstName", "lastName", "role", "email", "password"];
+    const allowupdates = ["firstName", "lastName", "role", "email"];
     const valid = updates.every((update) => allowupdates.includes(update));
     if (!valid) {
         return res.status(404).send({ error: "invalid" });
     }
+   
     try {
-
-        const user = await User.findById(req.params.id);
+       
+        const user = await User.findOne({_id:req.params.id,owner:req.user._id});
+      
         updates.forEach((update) => (user[update] = req.body[update]));
         await user.save();
         if (!user) {
@@ -126,7 +130,7 @@ exports.patchById = async (req, res) => {
 //Deleting user by ID  --->DELETE req
 exports.deleteById = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
+        const user = await User.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
         if (!user) {
             return res.status(404).send("no such user found");
         }
@@ -139,16 +143,16 @@ exports.deleteById = async (req, res) => {
 }
 
 
-//Deleting user by auth  --->DELETE req
-exports.deleteByAuth = async (req, res) => {
-    try {
-        await req.user.remove();
-        res.send(req.user);
-    }
-    catch (e) {
-        res.status(400).send(e);
-    }
-}
+// //Deleting user by auth  --->DELETE req
+// exports.deleteByAuth = async (req, res) => {
+//     try {
+//         await req.user.remove();
+//         res.send(req.user);
+//     }
+//     catch (e) {
+//         res.status(400).send(e);
+//     }
+// }
 
 
 

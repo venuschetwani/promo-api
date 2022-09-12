@@ -12,7 +12,7 @@ app.use('/uploads', express.static('uploads'));
 
 
 
-//adding shelfUser    --->GET req
+//adding shelfUser    --->POST req
 exports.addshelfUser = async (req, res) => {
   try {
     const shelf_user = new shelfUser({

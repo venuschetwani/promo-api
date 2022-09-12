@@ -9,10 +9,8 @@ const userControllers = require('../controllers/user.controller')
 //CRUD operations on user
 router.get("", userControllers.getAllUser)
 router.get("/me", auth, userControllers.getUserauth)
-router.get("/:id", userControllers.userById);
-router.patch("/me", auth, userControllers.patchAll);
-router.patch("/:id", userControllers.patchById);
-router.delete("/me", auth, userControllers.deleteByAuth);
-router.delete("/:id", userControllers.deleteById);
+router.get("/:id",auth, userControllers.userById);
+router.patch("/:id",auth, userControllers.patchById);
+router.delete("/:id",auth, userControllers.deleteById);
 
 module.exports = router
