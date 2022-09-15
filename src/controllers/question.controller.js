@@ -1,4 +1,4 @@
-const Form = require('../models/form.model')
+const formQuestion = require('../models/question.model')
 const express = require("express")
 require("../config/db");
 const app = express();
@@ -6,15 +6,15 @@ app.use(express.json());
 const _ = require("lodash")
 
 
-//adding form with Values  --->POST req
-exports.addform = async (req, res) => {
+//adding question with type and option values  --->POST req
+exports.addQuestion = async (req, res) => {
   try {
-    const form = new Form({
+    const formquestion = new formQuestion({
       ...req.body,
       owner: req.user._id
     });
-    await form.save()
-    res.status(201).send(form)
+    await formquestion.save()
+    res.status(201).send(formquestion)
 
   }
   catch (e) {
@@ -23,10 +23,10 @@ exports.addform = async (req, res) => {
   }
 }
 
-//Getting Forms by auth  --->GET req
-exports.getform = async (req, res) => {
+//Getting question by auth  --->GET req
+exports.getQuestion = async (req, res) => {
   try {
-    var data = await Form.find({
+    var data = await formQuestion.find({
       owner: req.user._id
     })
 
@@ -40,11 +40,11 @@ exports.getform = async (req, res) => {
 }
 
 
-//Getting Form by Id     --->GET req
+//Getting question by Id     --->GET req
 
-exports.getformById = async (req, res) => {
+exports.getQuestionById = async (req, res) => {
   const _id = req.params.id;
-  Form.find({ _id })
+  formQuestion.find({ _id })
     .then((data) => {
       if (!data) {
         return res.status(404).send()
@@ -57,11 +57,11 @@ exports.getformById = async (req, res) => {
 }
 
 
-//Updating formAnswers by auth   --->PUT req
-exports.AnswerspatchById = async (req, res) => {
+//Updating question by auth   --->PUT req
+exports.questionpatchById = async (req, res) => {
 
   const updatess = Object.keys(req.body);
-  const allowupdates = ["promoName", "fieldData"];
+  const allowupdates = ["questionHeader", "questionType", "optionValue"];
   const valid = updatess.every((update) => allowupdates.includes(update));
   if (!valid) {
     return res.status(404).send({ error: "invalid" });
@@ -69,7 +69,7 @@ exports.AnswerspatchById = async (req, res) => {
 
   try {
 
-    const data = await Form.findOne({ owner: req.user._id, _id: req.params.id });
+    const data = await formQuestion.findOne({ owner: req.user._id, _id: req.params.id });
     if (req.body.optionValue) {
       const objlen = Object.keys(req.body.optionValue).length
       for (let i = objlen - 1; i < objlen; i++) {
@@ -105,9 +105,9 @@ exports.AnswerspatchById = async (req, res) => {
 }
 
 //Deleting questionsbyId    --->DELETE req
-exports.formdeleteById = async (req, res) => {
+exports.questiondeleteById = async (req, res) => {
   try {
-    const data = await Form.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+    const data = await formQuestion.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
     if (!data) {
       return res.status(404).send("no such question found");
     }

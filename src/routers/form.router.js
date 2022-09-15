@@ -8,10 +8,10 @@ const auth = require("../middleware/auth")
 
 
 //CRUD operations on form
-router.post("", auth, formControllers.addQuestion)
-router.get("/getallquestions", auth, formControllers.getQuestion)
-router.get("/:id", auth, formControllers.getQuestionById)
-router.put("/:id", auth, formControllers.questionpatchById);
-router.delete("/:id", auth, formControllers.questiondeleteById);
+router.post("", auth, formControllers.addform)
+router.get("/getallforms", auth, formControllers.getform)
+router.get("/:id", auth, formControllers.getformById)
+router.put("/:id", auth, formControllers.AnswerspatchById);
+router.delete("/:id", auth, formControllers.formdeleteById);
 
 module.exports = router

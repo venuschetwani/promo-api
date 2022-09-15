@@ -5,8 +5,9 @@ const cors = require('cors')
 const user_router = require("./routers/user.router")
 const auth_router = require("./routers/auth.user")
 const sku_router = require("./routers/sku.router")
-const form =require("./routers/form.router")
+const question =require("./routers/question.router")
 const shelf_router = require("./routers/shelf.router")
+const form=require("./routers/form.router")
 const bodyparser = require('body-parser')
 const app = express();
 
@@ -30,7 +31,8 @@ app.use('/users', user_router);
 app.use('/user', auth_router)
 app.use('/sku', sku_router)
 app.use('/shelf', shelf_router)
-app.use('/form',form    )
+app.use('/question',question)
+app.use('/form',form)
 
 
 

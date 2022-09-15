@@ -140,7 +140,7 @@ exports.shelfdeleteById = async (req, res) => {
 }
 
 
-//Uploading Excelfile    ---->POST req
+//Uploading Excelfile    ---->POST req   
 exports.uploadXLSX = async (req, res) => {
   try {
     var workbook = xlsx.readFile(req.file.path);
@@ -184,7 +184,7 @@ exports.upload = multer({ storage: storage });
 
 
 
-//Creating an excelfile from the shelfUser database    --->GET req
+//Creating an excelfile from the shelfUser database    --->GET req  exportt
 exports.excelfile = async (req, res) => {
   try {
     const users = await shelfUser.find({}).populate("owner")

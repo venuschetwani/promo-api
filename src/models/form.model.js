@@ -1,20 +1,13 @@
 const mongoose = require('mongoose');
 
 const formBulider = new mongoose.Schema({
+   promoName:{
+       type:String
+   },
 
-  questionHeader: {
-    type: String,
-    trim: true
-  },
-  questionType: {
-    type: String,
-    trim: true
-  },
-  optionValue: {
-    type: Object,
-    default:{}
-
-  },
+  fieldData:[{
+      type:Object
+  }],
  
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,6 +17,6 @@ const formBulider = new mongoose.Schema({
 
 });
 
-const formQuestion = new mongoose.model("formQuestion", formBulider);
+const formBulid = new mongoose.model("formBulid", formBulider);
 
-module.exports = formQuestion
+module.exports = formBulid
